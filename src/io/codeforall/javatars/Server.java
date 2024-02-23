@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 
+// Full Disclaimer: Only to be seen by people who believe final results are what truly matter
+
 public class Server {
 
     public static void main(String[] args) {
@@ -13,10 +15,10 @@ public class Server {
             try {
                 ServerSocket socket = new ServerSocket(8080);
                 Socket clientSocket = null;
-                while(true) {
-                    
-                    if(clientSocket == null || clientSocket.isClosed()) {
 
+                while(true) {
+
+                    if(clientSocket == null || clientSocket.isClosed()) {
                         clientSocket = socket.accept();
                         System.out.println("New client accepted: " + clientSocket.getInetAddress() + ":" + clientSocket.getLocalPort());
                     }
@@ -27,17 +29,23 @@ public class Server {
                     String messageReceived = in.readLine();
                     System.out.println(messageReceived);
                     String[] fileRequested = messageReceived.split(" ");
+
                     if (fileRequested[0].equals("GET")) {
+
                         if (fileRequested[1].equals("/") || fileRequested[1].equals("/index.html")) {
                             out.println(getHeader("html", read("/index.html").length) + new String(read("/index.html")));
-                        } else if (fileRequested[1].equals("/logo.png")) {
+                        }
+
+                        else if (fileRequested[1].equals("/logo.png")) {
                             BufferedOutputStream outImg = new BufferedOutputStream(clientSocket.getOutputStream());
                             out.println(getHeader("png", read(fileRequested[1]).length));
                             System.out.println(getHeader("png", read(fileRequested[1]).length));
                             outImg.write(read("/logo.png"));
                             outImg.flush();
                             outImg.close();
-                        }else if(fileRequested[1].equals("/favicon.ico")) {
+                        }
+
+                        else if(fileRequested[1].equals("/favicon.ico")) {
                             BufferedOutputStream outImg = new BufferedOutputStream(clientSocket.getOutputStream());
                             out.println(getHeader("ico", read(fileRequested[1]).length));
                             System.out.println(getHeader("ico", read(fileRequested[1]).length));
@@ -45,13 +53,18 @@ public class Server {
                             outImg.flush();
                             outImg.close();
 
-                        } else {
+                        }
+
+                        else {
                             out.println(getHeader("", read("/404.html").length) + new String(read("/404.html")));
                         }
+
                     }
+
                     out.close();
                     in.close();
                 }
+
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
